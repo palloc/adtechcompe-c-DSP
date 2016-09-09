@@ -6,6 +6,7 @@ import time
 import json
 import pandas as pd
 import redis
+import bid_request
 
 my_redis = redis.Redis(host='104.199.206.136', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
@@ -20,15 +21,18 @@ class BidHandler(tornado.web.RequestHandler):
         self.write("test bid request.")
     def post(self, *args, **kwargs):
         self.write("test bid request.")
+        response = self.request.body
+        auction_id = json.loads(response)['id']
+
         #log data
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
             file.write("   ")
-            file.write(self.request.body)
+            file.write(response)
             file.write("\n")
 
         # redis logging
-        my_redis.set(round(time.time() * 1000),self.request.body)
+        my_redis.set(auction_id,self.request.body)
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
