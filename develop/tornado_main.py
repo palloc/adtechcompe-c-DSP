@@ -11,7 +11,7 @@ import bid_request
 my_redis = redis.Redis(host='104.199.206.136', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
-
+nurl = 'http://104.155.237.141/win'
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -20,11 +20,18 @@ class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
     def post(self, *args, **kwargs):
-        self.write("test bid request.")
-        response = self.request.body
-        auction_id = json.loads(response)['id']
+        request = self.request.body
+        auction_id = json.loads(request)['id']
+        # make response
+        response = {
+            'action_id' : action_id,
+            'bidPrice' : 150000.00,
+            'advertiserId' : 'adv_03',
+            'nurl' : nurl
+        }
+        self.write(json.dumps(response))
 
-        #log data
+        # log data
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
             file.write("   ")
@@ -32,7 +39,7 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("\n")
 
         # redis logging
-        my_redis.set(auction_id,self.request.body)
+        my_redis.set(auction_id, request)
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
