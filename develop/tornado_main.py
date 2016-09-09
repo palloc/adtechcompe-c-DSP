@@ -9,10 +9,11 @@ class MainHandler(tornado.web.RequestHandler):
 class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
+    def post(self):
+        self.write("test bid request.")
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
-
 
         
 if __name__ == "__main__":
