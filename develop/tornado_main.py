@@ -4,8 +4,11 @@ import tornado.httpclient
 import tornado.httpserver
 import time
 import json
+import pandas as pd
 
 ngdomains_list = json.load(open('json/ngdomains.json'))
+budgets_df = pd.read_json('json/budgets.json')
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -33,6 +36,12 @@ def return_ngdomains(adv_id):
 # retuen True if its domain is NG
 def is_ngdomains(adv_id, domain):
     return domain in ngdomains_list['adv_'+adv_id]
+
+def get_budget(adv_id):
+    return budgets_df['adv_'+adv_id]['budget']
+
+def get_cpc(adv_id):
+    return budgets_df['adv_'+adv_id]['cpc']
 
 if __name__ == "__main__":
     application = tornado.web.Application([
