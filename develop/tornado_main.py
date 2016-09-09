@@ -38,7 +38,7 @@ class BidHandler(tornado.web.RequestHandler):
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
             file.write("   ")
-            file.write(response)
+            file.write(json.dumps(response))
             file.write("\n")
 
         # redis logging
