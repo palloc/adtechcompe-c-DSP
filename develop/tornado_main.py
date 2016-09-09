@@ -19,14 +19,17 @@ class MainHandler(tornado.web.RequestHandler):
 class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
+
     def post(self, *args, **kwargs):
         request = self.request.body
         auction_id = json.loads(request)['id']
+        bidPrice = 150000.00
+        adv_id = 'adv_03'
         # make response
         response = {
             'action_id' : action_id,
-            'bidPrice' : 150000.00,
-            'advertiserId' : 'adv_03',
+            'bidPrice' : bidPrice,
+            'advertiserId' : adv_id,
             'nurl' : nurl
         }
         self.write(json.dumps(response))
