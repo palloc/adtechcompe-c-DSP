@@ -2,6 +2,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.httpclient
 import tornado.httpserver
+import time
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -9,11 +11,19 @@ class MainHandler(tornado.web.RequestHandler):
 class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
-    def post(self):
+    def post(self, *args, **kwargs):
         self.write("test bid request.")
+        #log data
+        with open("/var/log/bid_access.log", "a+") as file:
+            file.write(time.ctime())
+            file.write("   ")
+            file.write(self.request.body)
+            file.write("\n")
+
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
+        
 
         
 if __name__ == "__main__":
