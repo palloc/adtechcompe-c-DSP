@@ -5,7 +5,9 @@ import tornado.httpserver
 import time
 import json
 import pandas as pd
+import redis
 
+my_redis = redis.Redis(host='104.199.206.136', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 
@@ -24,6 +26,9 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("   ")
             file.write(self.request.body)
             file.write("\n")
+
+        # redis logging
+        my_redis.set(round(time.time() * 1000),self.request.body)
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
@@ -49,6 +54,6 @@ if __name__ == "__main__":
         (r"/bid", BidHandler),
         (r"/win", Win_Handler),
     ])
-    
+
     application.listen(80)
     tornado.ioloop.IOLoop.current().start()
