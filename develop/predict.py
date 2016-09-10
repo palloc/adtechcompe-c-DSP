@@ -46,7 +46,7 @@ def make_feature(bid_request):
 def predict(bid_request, advertisers):
     x = make_feature(bid_request)
     print "bid_request"
-    print x
+    x = x.reshape(1,-1)
     ctr = []
     for n in range(1, 21):
         if n in advertisers:
@@ -57,5 +57,5 @@ def predict(bid_request, advertisers):
     return ctr
 
 #ctr = predict(bid_request,[])
-#
+
 #print ctr
