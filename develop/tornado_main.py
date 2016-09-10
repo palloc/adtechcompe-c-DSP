@@ -100,7 +100,6 @@ class DebugHandler(tornado.web.RequestHandler):
 
 if __name__ == "__main__":
     bg.connect()
-    bg.init_budgets()
 
     application = tornado.web.Application([
         (r"/", MainHandler),
