@@ -32,7 +32,7 @@ class BidHandler(tornado.web.RequestHandler):
         budgets = bg.get_budgets()
 
         # list of CTRs
-        ctr_list = pred.predict(json.loads(request))
+        ctr_list = pred.predict(json.loads(request)["site"])
         value_list = []
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])

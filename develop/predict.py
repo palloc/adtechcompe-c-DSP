@@ -12,27 +12,27 @@ with open("clf/dics/cluster_dic_user.dump","r") as f:
 
 #when bid_request comes, make features from browser_dic,cluster_dic_site,cluster_dic_user and predict for each adv
 
-bid_request = ["Chrome","action.jp",0]
+# bid_request = ["Chrome","action.jp",0]
 
 
 def make_feature(bid_request):
     x = np.array([])
 
-    browser_vec = np.zeros(4)
-    browser_index = browser_dic[bid_request[0]]
-    browser_vec.put(browser_index,1)
-    print browser_vec
+    # browser_vec = np.zeros(4)
+    # browser_index = browser_dic[bid_request[0]]
+    # browser_vec.put(browser_index,1)
+    # print browser_vec
 
     site_vec = np.zeros(100)
-    site_index = cluster_dic_site[bid_request[1]]
+    site_index = cluster_dic_site[bid_request]
     site_vec.put(browser_index,1)
 
-    user_vec = np.zeros(50)
-    user_index = cluster_dic_user[bid_request[2]]
-    user_vec.put(browser_index,1)
+    # user_vec = np.zeros(50)
+    # user_index = cluster_dic_user[bid_request[2]]
+    # user_vec.put(browser_index,1)
 
-    x = np.append(x, user_vec)
-    x = np.append(x, browser_vec)
+    # x = np.append(x, user_vec)
+    # x = np.append(x, browser_vec)
     x = np.append(x, site_vec)
     return x
 
