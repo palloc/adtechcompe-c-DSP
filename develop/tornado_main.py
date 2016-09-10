@@ -70,7 +70,6 @@ class BidHandler(tornado.web.RequestHandler):
             self.write(json.dumps(response))
         else:
             self.set_status(204)
-            self.finish()
 
         # log data
         with open("/var/log/bid_access.log", "a+") as file:
