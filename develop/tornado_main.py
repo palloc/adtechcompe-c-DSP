@@ -41,16 +41,16 @@ class BidHandler(tornado.web.RequestHandler):
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
 
-        bidPrice_ = max(value_list)
+        bidPrice = max(value_list)
         adv_id_ = value_list.index(max(value_list)) + 1
-        adv_id_str = 'adv_' + str(adv_id_).zfill(2)
+        adv_id = 'adv_' + str(adv_id_).zfill(2)
 
         print "bid price and adv id"
-        print bidPrice_
-        print adv_id_str
+        print bidPrice
+        print adv_id
 
-        bidPrice = 150000.00
-        adv_id = 'adv_03'
+        # bidPrice = 150000.00
+        # adv_id = 'adv_03'
         # make response
         response = {
             'id' : auction_id,
