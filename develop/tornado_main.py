@@ -16,6 +16,9 @@ ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 nurl = 'http://104.155.237.141/win/'
 
+hashed_ng_domains = {
+    k: set(v) for k, v in json.load(open('json/ngdomains.json')).iteritems()}
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -26,17 +29,24 @@ class BidHandler(tornado.web.RequestHandler):
 
     def post(self, *args, **kwargs):
         request = self.request.body
-        auction_id = json.loads(request)['id']
+        j = json.loads(request)
+        auction_id = j['id']
+
+        # check NG domains and decide advertiser to join
+        advertisers = [
+            int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
+            if j['site'] not in ngdomains
+        ]
 
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
-        # list of CTRs
-        print json.loads(request)
-        bid_user = int(json.loads(request)["user"][5:-1])
-        bid_request_for_predict = [json.loads(request)["browser"], json.loads(request)["site"],bid_user]
-        ctr_list = pred.predict(bid_request_for_predict)
-        print json.loads(request)
+        bid_user = int(j["user"])
+        bid_request_for_predict = [j["browser"], j["site"],bid_user]
+
+        # predict CTR
+        ctr_list = pred.predict(bid_request_for_predict, advertisers)
+
         value_list = []
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
@@ -49,8 +59,10 @@ class BidHandler(tornado.web.RequestHandler):
         print bidPrice
         print adv_id
 
-        # bidPrice = 150000.00
-        # adv_id = 'adv_03'
+        if budgets[adv_id] < bidPrice:
+            self.set_status(204)
+            self.finish()
+
         # make response
         response = {
             'id' : auction_id,
@@ -78,22 +90,6 @@ class Win_Handler(tornado.web.RequestHandler):
         # consume adv_id's badget
         bg.consume(adv_id, float(req['price']))
 
-
-
-# return the list of ngdomains
-def return_ngdomains(adv_id):
-    return ngdomains_list['adv_'+adv_id]
-
-# retuen True if its domain is NG
-def is_ngdomains(adv_id, domain):
-    return domain in ngdomains_list['adv_'+adv_id]
-
-def get_budget(adv_id):
-    return budgets_df['adv_'+adv_id]['budget']
-
-def get_cpc(adv_id):
-    return budgets_df['adv_'+adv_id]['cpc']
-
 if __name__ == "__main__":
     bg.connect()
     bg.init_budgets()
@@ -104,5 +100,7 @@ if __name__ == "__main__":
         (r"/win/(.*)", Win_Handler),
     ])
 
-    application.listen(80)
+    server = tornado.httpserver.HTTPServer(application)
+    server.bind(80)
+    server.start(0)
     tornado.ioloop.IOLoop.current().start()
