@@ -5,13 +5,11 @@ import tornado.httpserver
 import time
 import json
 import pandas as pd
-import redis
 import bid_request
 
-my_redis = redis.Redis(host='10.140.0.4', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
-nurl = 'http://104.155.237.141/win'
+nurl = 'http://104.155.237.141/win/'
 
 
 class MainHandler(tornado.web.RequestHandler):
@@ -21,7 +19,7 @@ class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
 
-    def post(self, *args, **kwargs):
+    def post(self, args):
         request = self.request.body
         auction_id = json.loads(request)['id']
         bidPrice = 150000.00
@@ -31,7 +29,7 @@ class BidHandler(tornado.web.RequestHandler):
             'id' : auction_id,
             'bidPrice' : bidPrice,
             'advertiserId' : adv_id,
-            'nurl' : nurl
+            'nurl' : nurl + adv_id
         }
         # set header
         self.set_header('Content-Type', 'application/json')
@@ -50,8 +48,13 @@ class BidHandler(tornado.web.RequestHandler):
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
-    def post(self):
-        self.write("thank you.")
+    def post(self, adv_id):
+        req = json.loads(self.request.body)
+
+        # consume adv_id's badget
+        bg.consume(adv_id, float(req['price']))
+
+
 
 # return the list of ngdomains
 def return_ngdomains(adv_id):
@@ -71,7 +74,7 @@ if __name__ == "__main__":
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/bid", BidHandler),
-        (r"/win", Win_Handler),
+        (r"/win/(.*)", Win_Handler),
     ])
 
     application.listen(80)
