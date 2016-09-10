@@ -17,7 +17,7 @@ _config = {
 }
 _key = ('test', 'budgets', 'budget')
 _meta = {
-    'ttl': 60
+    'ttl': 10810  # seconds
 }
 
 
