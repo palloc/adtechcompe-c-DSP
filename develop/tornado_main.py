@@ -32,14 +32,14 @@ class BidHandler(tornado.web.RequestHandler):
         auction_id = j['id']
         floorprice = j['floorPrice']
 
-        # check NG domains and decide advertiser to join
-        advertisers = [
-            int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
-            if j['site'] not in ngdomains
-        ]
-
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
+
+        # check NG domains and budgets, then decide advertiser to join
+        advertisers = [
+            int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
+            if j['site'] not in ngdomains and budgets[adv] > 0
+        ]
 
         bid_user = int(j["user"])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
@@ -54,10 +54,6 @@ class BidHandler(tornado.web.RequestHandler):
 
         adv_id_ = value_list.index(max(value_list)) + 1
         adv_id = 'adv_' + str(adv_id_).zfill(2)
-
-        if budgets[adv_id] < bidPrice:
-            self.set_status(204)
-            self.finish()
 
         bidPrice *= 1000
         # make response
@@ -85,7 +81,7 @@ class BidHandler(tornado.web.RequestHandler):
         with open("/var/log/bid_price.log", "a+") as file:
             buf = " bid price = " + str(bidPrice) + "     adv_id = " + adv_id
             file.write(buf)
-        
+
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
