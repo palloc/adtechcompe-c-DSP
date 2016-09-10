@@ -50,7 +50,7 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("\n")
 
         # redis logging
-        my_redis.set(auction_id, response)
+        my_redis.set(auction_id, json.dumps(response))
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
