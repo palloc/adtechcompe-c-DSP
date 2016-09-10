@@ -25,11 +25,11 @@ def make_feature(bid_request):
 
     site_vec = np.zeros(100)
     site_index = cluster_dic_site[bid_request]
-    site_vec.put(browser_index,1)
+    site_vec.put(site_index,1)
 
     # user_vec = np.zeros(50)
     # user_index = cluster_dic_user[bid_request[2]]
-    # user_vec.put(browser_index,1)
+    # user_vec.put(user_index,1)
 
     # x = np.append(x, user_vec)
     # x = np.append(x, browser_vec)
