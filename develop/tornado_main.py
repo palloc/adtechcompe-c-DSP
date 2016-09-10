@@ -13,6 +13,7 @@ ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 nurl = 'http://104.155.237.141/win'
 
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test")
