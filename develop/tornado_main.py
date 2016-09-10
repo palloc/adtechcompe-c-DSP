@@ -34,10 +34,10 @@ class BidHandler(tornado.web.RequestHandler):
 
         # check NG domains and decide advertiser to join
         advertisers = [
-            adv for adv, ngdomains in hashed_ng_domains.iteritems()
+            int(adv[4:-1]) for adv, ngdomains in hashed_ng_domains.iteritems()
             if j['site'] not in ngdomains
         ]
-
+        p advertisers
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
