@@ -4,10 +4,10 @@ import numpy as np
 
 browser_dic = {'Chrome':0,'Firefox':1,'Opera':2,'Safari':3}
 
-with open("./dics/cluster_dic_site.dump","r") as f:
+with open("clf/dics/cluster_dic_site.dump","r") as f:
     cluster_dic_site = pickle.load(f)
 
-with open("./dics/cluster_dic_user.dump","r") as f:
+with open("clf/dics/cluster_dic_user.dump","r") as f:
     cluster_dic_user = pickle.load(f)
 
 #when bid_request comes, make features from browser_dic,cluster_dic_site,cluster_dic_user and predict for each adv
@@ -41,7 +41,7 @@ def predict(bid_request):
     print x
     ctr = []
     for n in range(20):
-        with open("lr_clf_%d.dump" % int(n + 1)) as f:
+        with open("clf/lr_clf_%d.dump" % int(n + 1)) as f:
             clf = pickle.load(f)
         ctr.append(clf.predict_proba(x)[0][1])
     return ctr
