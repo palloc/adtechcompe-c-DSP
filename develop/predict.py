@@ -38,6 +38,7 @@ def make_feature(bid_request):
 
 def predict(bid_request):
     x = make_feature(bid_request)
+    print "bid_request"
     print x
     ctr = []
     for n in range(20):
@@ -46,6 +47,6 @@ def predict(bid_request):
         ctr.append(clf.predict_proba(x)[0][1])
     return ctr
 
-ctr = predict(bid_request)
-
-print ctr
+# ctr = predict(bid_request)
+#
+# print ctr

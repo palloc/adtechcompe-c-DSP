@@ -33,6 +33,7 @@ class BidHandler(tornado.web.RequestHandler):
 
         # list of CTRs
         ctr_list = pred.predict(json.loads(request)["site"])
+        print json.loads(request)
         value_list = []
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
@@ -40,6 +41,10 @@ class BidHandler(tornado.web.RequestHandler):
         bidPrice_ = max(value_list)
         adv_id_ = value_list.index(max(value_list)) + 1
         adv_id_str = 'adv_' + str(adv_id_).zfill(2)
+
+        print "bid price and adv id"
+        print bidPrice_
+        print adv_id_str
 
         bidPrice = 150000.00
         adv_id = 'adv_03'
