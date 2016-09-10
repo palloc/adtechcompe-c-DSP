@@ -46,7 +46,7 @@ class BidHandler(tornado.web.RequestHandler):
 
         # predict CTR
         ctr_list = pred.predict(bid_request_for_predict, advertisers)
-        print j
+
         value_list = []
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
@@ -63,8 +63,6 @@ class BidHandler(tornado.web.RequestHandler):
             self.set_status(204)
             self.finish()
 
-        # bidPrice = 150000.00
-        # adv_id = 'adv_03'
         # make response
         response = {
             'id' : auction_id,
@@ -91,9 +89,6 @@ class Win_Handler(tornado.web.RequestHandler):
 
         # consume adv_id's badget
         bg.consume(adv_id, float(req['price']))
-
-def get_budget(adv_id):
-    return budgets_df['adv_'+adv_id]['budget']
 
 if __name__ == "__main__":
     bg.connect()
