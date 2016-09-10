@@ -11,7 +11,7 @@ import sys
 _client = None
 _config = {
     'hosts': [
-        ('10.140.0.5' if os.uname()[0] == 'Linux' else '104.199.168.165',
+        ('10.140.0.10' if os.uname()[0] == 'Linux' else '104.199.207.153',
          3000)
     ]
 }
