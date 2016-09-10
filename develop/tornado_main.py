@@ -7,6 +7,7 @@ import json
 import pandas as pd
 import redis
 import bid_request
+import badgets as bg
 
 my_redis = redis.Redis(host='10.140.0.4', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
@@ -26,6 +27,10 @@ class BidHandler(tornado.web.RequestHandler):
         auction_id = json.loads(request)['id']
         bidPrice = 150000.00
         adv_id = 'adv_03'
+
+        # consume adv_id's badget
+        bg.consume(adv_id, bidPrice)
+
         # make response
         response = {
             'id' : auction_id,
@@ -68,6 +73,9 @@ def get_cpc(adv_id):
     return budgets_df['adv_'+adv_id]['cpc']
 
 if __name__ == "__main__":
+    bg.connect()
+    bg.init_budgets()
+
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/bid", BidHandler),
