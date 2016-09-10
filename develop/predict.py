@@ -36,15 +36,17 @@ def make_feature(bid_request):
     x = np.append(x, site_vec)
     return x
 
-def predict(bid_request):
+def predict(bid_request, advertisers):
     x = make_feature(bid_request)
     print "bid_request"
     print x
     ctr = []
     for n in range(20):
-        with open("clf/lr_clf_%d.dump" % int(n + 1)) as f:
-            clf = pickle.load(f)
-        ctr.append(clf.predict_proba(x)[0][1])
+        if n in advertisers:
+            with open("clf/lr_clf_%d.dump" % int(n + 1)) as f:
+                clf = pickle.load(f)
+            ctr.append(clf.predict_proba(x)[0][1])
+
     return ctr
 
 # ctr = predict(bid_request)
