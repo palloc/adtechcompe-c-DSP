@@ -10,7 +10,10 @@ import sys
 
 _client = None
 _config = {
-    'hosts': [('104.199.207.212', 3000)]
+    'hosts': [
+        ('10.140.0.5' if os.uname()[0] == 'Linux' else '104.199.168.165',
+         3000)
+    ]
 }
 _key = ('test', 'budgets', 'budget')
 _meta = {
