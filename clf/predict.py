@@ -3,11 +3,11 @@ import pickle
 import numpy as np
 
 browser_dic = {'Chrome':0,'Firefox':1,'Opera':2,'Safari':3}
- 
-with open("dics/cluster_dic_site.dump","r") as f:
+
+with open("./dics/cluster_dic_site.dump","r") as f:
     cluster_dic_site = pickle.load(f)
-    
-with open("dics/cluster_dic_user.dump","r") as f:
+
+with open("./dics/cluster_dic_user.dump","r") as f:
     cluster_dic_user = pickle.load(f)
 
 #when bid_request comes, make features from browser_dic,cluster_dic_site,cluster_dic_user and predict for each adv
@@ -22,7 +22,7 @@ def make_feature(bid_request):
     browser_index = browser_dic[bid_request[0]]
     browser_vec.put(browser_index,1)
     print browser_vec
-    
+
     site_vec = np.zeros(100)
     site_index = cluster_dic_site[bid_request[1]]
     site_vec.put(browser_index,1)
@@ -30,12 +30,12 @@ def make_feature(bid_request):
     user_vec = np.zeros(50)
     user_index = cluster_dic_user[bid_request[2]]
     user_vec.put(browser_index,1)
-    
+
     x = np.append(x, user_vec)
     x = np.append(x, browser_vec)
     x = np.append(x, site_vec)
     return x
-    
+
 def predict(bid_request):
     x = make_feature(bid_request)
     print x
