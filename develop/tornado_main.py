@@ -41,7 +41,7 @@ class BidHandler(tornado.web.RequestHandler):
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
-        bid_user = int(j["user"][5:])
+        bid_user = int(j["user"])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
 
         # predict CTR
