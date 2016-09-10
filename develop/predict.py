@@ -28,7 +28,7 @@ def make_feature(bid_request):
     browser_vec = np.zeros(4)
     browser_index = browser_dic[bid_request[0]]
     browser_vec.put(browser_index,1)
-    print browser_vec
+#    print browser_vec
 
     site_vec = np.zeros(100)
     site_index = cluster_dic_site[bid_request[1]]
@@ -45,7 +45,7 @@ def make_feature(bid_request):
 
 def predict(bid_request, advertisers):
     x = make_feature(bid_request)
-    print "bid_request"
+#    print "bid_request"
     x = x.reshape(1,-1)
     ctr = []
     for n in range(1, 21):

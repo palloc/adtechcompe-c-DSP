@@ -5,7 +5,6 @@ import tornado.httpserver
 import time
 import json
 import pandas as pd
-import bid_request
 import badgets as bg
 import sys
 sys.path.append('../clf')
