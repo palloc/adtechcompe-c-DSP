@@ -53,6 +53,10 @@ def get_budgets():
     return bins
 
 
+def set_budgets(budgets):
+    _client.put(_key, budgets, _meta)
+
+
 def consume(adv, budget):
     _client.increment(_key, adv, -budget)
 
