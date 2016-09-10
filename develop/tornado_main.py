@@ -12,6 +12,8 @@ ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 nurl = 'http://104.155.237.141/win/'
 
+hashed_ng_domains = {
+    k: set(v) for k, v in json.load(open('json/ngdomains.json')).iteritems()}
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -22,7 +24,14 @@ class BidHandler(tornado.web.RequestHandler):
 
     def post(self, *args, **kwargs):
         request = self.request.body
-        auction_id = json.loads(request)['id']
+        j = json.loads(request)
+        auction_id = j['id']
+
+        # check NG domains and decide advertiser to join
+        advertisers = [
+            adv for adv, ngdomains in hashed_ng_domains.iteritems()
+            if j['site'] not in ngdomains
+        ]
 
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
