@@ -34,14 +34,14 @@ class BidHandler(tornado.web.RequestHandler):
 
         # check NG domains and decide advertiser to join
         advertisers = [
-            int(adv[4:-1]) for adv, ngdomains in hashed_ng_domains.iteritems()
+            int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
             if j['site'] not in ngdomains
         ]
-        p advertisers
+        print advertisers
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
-        bid_user = int(j["user"][5:-1])
+        bid_user = int(j["user"][5:])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
 
         # predict CTR
