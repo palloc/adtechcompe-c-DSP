@@ -58,6 +58,10 @@ class BidHandler(tornado.web.RequestHandler):
         print bidPrice
         print adv_id
 
+        if budgets[adv_id] < bidPrice:
+            self.set_status(204)
+            self.finish()
+
         # bidPrice = 150000.00
         # adv_id = 'adv_03'
         # make response
