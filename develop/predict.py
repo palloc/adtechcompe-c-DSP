@@ -46,7 +46,8 @@ def predict(bid_request, advertisers):
             with open("clf/lr_clf_%d.dump" % int(n)) as f:
                 clf = pickle.load(f)
             ctr.append(clf.predict_proba(x)[0][1])
-
+        else:
+            ctr.append(0)
     return ctr
 
 # ctr = predict(bid_request)
