@@ -8,7 +8,7 @@ import pandas as pd
 import redis
 import bid_request
 
-my_redis = redis.Redis(host='104.199.206.136', port=6379, password = 'ePYL7NVi')
+my_redis = redis.Redis(host='10.140.0.4', port=6379, password = 'ePYL7NVi')
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 nurl = 'http://104.155.237.141/win'
@@ -33,6 +33,8 @@ class BidHandler(tornado.web.RequestHandler):
             'advertiserId' : adv_id,
             'nurl' : nurl
         }
+        # set header
+        self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(response))
 
         # log data
