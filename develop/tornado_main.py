@@ -77,7 +77,7 @@ class BidHandler(tornado.web.RequestHandler):
         else:
             self.set_status(204)
             self.finish()
-            
+
         # log data
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
@@ -94,6 +94,10 @@ class Win_Handler(tornado.web.RequestHandler):
         # consume adv_id's badget
         bg.consume(adv_id, float(req['price']))
 
+class DebugHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("debug")
+
 if __name__ == "__main__":
     bg.connect()
     bg.init_budgets()
@@ -102,6 +106,7 @@ if __name__ == "__main__":
         (r"/", MainHandler),
         (r"/bid", BidHandler),
         (r"/win/(.*)", Win_Handler),
+        (r"/debug", DebugHandler),
     ])
 
     server = tornado.httpserver.HTTPServer(application)
