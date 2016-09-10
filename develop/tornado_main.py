@@ -31,7 +31,7 @@ class BidHandler(tornado.web.RequestHandler):
         request = self.request.body
         j = json.loads(request)
         auction_id = j['id']
-
+        floorprice = j['floorPrice']
         # check NG domains and decide advertiser to join
         advertisers = [
             int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
@@ -70,10 +70,14 @@ class BidHandler(tornado.web.RequestHandler):
             'advertiserId' : adv_id,
             'nurl' : nurl + adv_id
         }
-        # set header
-        self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(response))
-
+        if floorprice < response['bidPrice']:
+            # set header
+            self.set_header('Content-Type', 'application/json')
+            self.write(json.dumps(response))
+        else:
+            self.set_status(204)
+            self.finish()
+            
         # log data
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
