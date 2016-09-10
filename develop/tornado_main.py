@@ -55,9 +55,6 @@ class BidHandler(tornado.web.RequestHandler):
         adv_id_ = value_list.index(max(value_list)) + 1
         adv_id = 'adv_' + str(adv_id_).zfill(2)
 
-        print "bid price and adv id"
-        print bidPrice
-        print adv_id
 
         if budgets[adv_id] < bidPrice:
             self.set_status(204)
@@ -84,7 +81,10 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("   ")
             file.write(json.dumps(response))
             file.write("\n")
-
+        with open("/var/log/bid_price.log", "a+") as file:
+            buf = " bid price = " + str(bidPrice) + "     adv_id = " + adv_id
+            file.write(buf)
+        
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
