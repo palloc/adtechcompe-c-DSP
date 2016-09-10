@@ -7,6 +7,10 @@ import json
 import pandas as pd
 import bid_request
 import badgets as bg
+import sys
+sys.path.append('../clf')
+import predict as pred
+
 
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
@@ -36,8 +40,26 @@ class BidHandler(tornado.web.RequestHandler):
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
-        bidPrice = 150000.00
-        adv_id = 'adv_03'
+        # list of CTRs
+        print json.loads(request)
+        bid_user = int(json.loads(request)["user"][5:-1])
+        bid_request_for_predict = [json.loads(request)["browser"], json.loads(request)["site"],bid_user]
+        ctr_list = pred.predict(bid_request_for_predict)
+        print json.loads(request)
+        value_list = []
+        for (i, ctr) in enumerate(ctr_list):
+            value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
+
+        bidPrice = max(value_list)
+        adv_id_ = value_list.index(max(value_list)) + 1
+        adv_id = 'adv_' + str(adv_id_).zfill(2)
+
+        print "bid price and adv id"
+        print bidPrice
+        print adv_id
+
+        # bidPrice = 150000.00
+        # adv_id = 'adv_03'
         # make response
         response = {
             'id' : auction_id,

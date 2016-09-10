@@ -3,16 +3,16 @@ import pickle
 import numpy as np
 
 browser_dic = {'Chrome':0,'Firefox':1,'Opera':2,'Safari':3}
- 
-with open("dics/cluster_dic_site.dump","r") as f:
+
+with open("clf/dics/cluster_dic_site.dump","r") as f:
     cluster_dic_site = pickle.load(f)
-    
-with open("dics/cluster_dic_user.dump","r") as f:
+
+with open("clf/dics/cluster_dic_user.dump","r") as f:
     cluster_dic_user = pickle.load(f)
 
 #when bid_request comes, make features from browser_dic,cluster_dic_site,cluster_dic_user and predict for each adv
 
-bid_request = ["Chrome","action.jp",0]
+# bid_request = ["Chrome","action.jp",0]
 
 
 def make_feature(bid_request):
@@ -22,30 +22,31 @@ def make_feature(bid_request):
     browser_index = browser_dic[bid_request[0]]
     browser_vec.put(browser_index,1)
     print browser_vec
-    
+
     site_vec = np.zeros(100)
     site_index = cluster_dic_site[bid_request[1]]
-    site_vec.put(browser_index,1)
+    site_vec.put(site_index,1)
 
     user_vec = np.zeros(50)
     user_index = cluster_dic_user[bid_request[2]]
-    user_vec.put(browser_index,1)
-    
+    user_vec.put(user_index,1)
+
     x = np.append(x, user_vec)
     x = np.append(x, browser_vec)
     x = np.append(x, site_vec)
     return x
-    
+
 def predict(bid_request):
     x = make_feature(bid_request)
+    print "bid_request"
     print x
     ctr = []
     for n in range(20):
-        with open("lr_clf_%d.dump" % int(n + 1)) as f:
+        with open("clf/lr_clf_%d.dump" % int(n + 1)) as f:
             clf = pickle.load(f)
         ctr.append(clf.predict_proba(x)[0][1])
     return ctr
 
-ctr = predict(bid_request)
-
-print ctr
+# ctr = predict(bid_request)
+#
+# print ctr
