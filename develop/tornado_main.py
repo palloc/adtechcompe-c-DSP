@@ -6,6 +6,7 @@ import time
 import json
 import pandas as pd
 import bid_request
+import badgets as bg
 
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
@@ -22,6 +23,10 @@ class BidHandler(tornado.web.RequestHandler):
     def post(self, args):
         request = self.request.body
         auction_id = json.loads(request)['id']
+
+        # fetch all advertiser's budgets
+        budgets = bg.get_budgets()
+
         bidPrice = 150000.00
         adv_id = 'adv_03'
         # make response
@@ -43,7 +48,7 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("\n")
 
         # redis logging
-        my_redis.set(auction_id, request)
+        my_redis.set(auction_id, json.dumps(response))
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
@@ -71,6 +76,9 @@ def get_cpc(adv_id):
     return budgets_df['adv_'+adv_id]['cpc']
 
 if __name__ == "__main__":
+    bg.connect()
+    bg.init_budgets()
+
     application = tornado.web.Application([
         (r"/", MainHandler),
         (r"/bid", BidHandler),
