@@ -113,5 +113,7 @@ if __name__ == "__main__":
         (r"/win/(.*)", Win_Handler),
     ])
 
-    application.listen(80)
+    server = tornado.httpserver.HTTPServer(application)
+    server.bind(80)
+    server.start(0)
     tornado.ioloop.IOLoop.current().start()
