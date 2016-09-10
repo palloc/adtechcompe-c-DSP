@@ -19,6 +19,7 @@ nurl = 'http://104.155.237.141/win/'
 hashed_ng_domains = {
     k: set(v) for k, v in json.load(open('json/ngdomains.json')).iteritems()}
 
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test")
@@ -33,19 +34,19 @@ class BidHandler(tornado.web.RequestHandler):
 
         # check NG domains and decide advertiser to join
         advertisers = [
-            adv for adv, ngdomains in hashed_ng_domains.iteritems()
+            int(adv[4:]) for adv, ngdomains in hashed_ng_domains.iteritems()
             if j['site'] not in ngdomains
         ]
 
         # fetch all advertiser's budgets
         budgets = bg.get_budgets()
 
-        # list of CTRs
-        print json.loads(request)
-        bid_user = int(json.loads(request)["user"][5:-1])
-        bid_request_for_predict = [json.loads(request)["browser"], json.loads(request)["site"],bid_user]
-        ctr_list = pred.predict(bid_request_for_predict)
-        print json.loads(request)
+        bid_user = int(j["user"][5:])
+        bid_request_for_predict = [j["browser"], j["site"],bid_user]
+
+        # predict CTR
+        ctr_list = pred.predict(bid_request_for_predict, advertisers)
+
         value_list = []
         for (i, ctr) in enumerate(ctr_list):
             value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
@@ -62,8 +63,6 @@ class BidHandler(tornado.web.RequestHandler):
             self.set_status(204)
             self.finish()
 
-        # bidPrice = 150000.00
-        # adv_id = 'adv_03'
         # make response
         response = {
             'id' : auction_id,
@@ -90,22 +89,6 @@ class Win_Handler(tornado.web.RequestHandler):
 
         # consume adv_id's badget
         bg.consume(adv_id, float(req['price']))
-
-
-
-# return the list of ngdomains
-def return_ngdomains(adv_id):
-    return ngdomains_list['adv_'+adv_id]
-
-# retuen True if its domain is NG
-def is_ngdomains(adv_id, domain):
-    return domain in ngdomains_list['adv_'+adv_id]
-
-def get_budget(adv_id):
-    return budgets_df['adv_'+adv_id]['budget']
-
-def get_cpc(adv_id):
-    return budgets_df['adv_'+adv_id]['cpc']
 
 if __name__ == "__main__":
     bg.connect()
