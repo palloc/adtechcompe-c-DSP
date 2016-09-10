@@ -36,6 +36,10 @@ def init_budgets():
                            orient='index')
     bins = budgets.loc[:, 'budget'].to_dict()
 
+    # to float
+    for adv in bins:
+        bins[adv] = float(bins[adv])
+
     try:
         _client.put(_key, bins, meta=_meta)
     except Exception as e:
@@ -61,8 +65,8 @@ if __name__ == '__main__':
     connect()
     init_budgets()
     print(get_budgets())
-    consume('adv_01', 100)
+    consume('adv_01', 100.0)
     print(get_budgets())
-    consume('adv_02', 55555)
+    consume('adv_02', 55555.0)
     print(get_budgets())
     disconnect()
