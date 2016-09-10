@@ -23,12 +23,12 @@ class BidHandler(tornado.web.RequestHandler):
 
     def post(self, *args, **kwargs):
         request = self.request.body
-        action_id = json.loads(request)['id']
+        auction_id = json.loads(request)['id']
         bidPrice = 150000.00
         adv_id = 'adv_03'
         # make response
         response = {
-            'action_id' : action_id,
+            'id' : auction_id,
             'bidPrice' : bidPrice,
             'advertiserId' : adv_id,
             'nurl' : nurl
@@ -45,11 +45,13 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("\n")
 
         # redis logging
-        my_redis.set(action_id, request)
+        my_redis.set(auction_id, request)
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
         self.write("test win notice.")
+    def post(self):
+        self.write("thank you.")
 
 # return the list of ngdomains
 def return_ngdomains(adv_id):
