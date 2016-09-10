@@ -32,6 +32,7 @@ class BidHandler(tornado.web.RequestHandler):
         budgets = bg.get_budgets()
 
         # list of CTRs
+        print json.loads(request)
         bid_user = int(json.loads(request)["user"][5:-1])
         bid_request_for_predict = [json.loads(request)["browser"], json.loads(request)["site"],bid_user]
         ctr_list = pred.predict()
