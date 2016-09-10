@@ -60,6 +60,7 @@ class BidHandler(tornado.web.RequestHandler):
             self.set_status(204)
             self.finish()
 
+        bidPrice *= 1000
         # make response
         response = {
             'id' : auction_id,
