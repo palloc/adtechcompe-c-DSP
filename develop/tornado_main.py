@@ -20,7 +20,7 @@ class BidHandler(tornado.web.RequestHandler):
     def get(self):
         self.write("test bid request.")
 
-    def post(self, args):
+    def post(self, *args, **kwargs):
         request = self.request.body
         auction_id = json.loads(request)['id']
 
@@ -46,9 +46,6 @@ class BidHandler(tornado.web.RequestHandler):
             file.write("   ")
             file.write(json.dumps(response))
             file.write("\n")
-
-        # redis logging
-        my_redis.set(auction_id, json.dumps(response))
 
 class Win_Handler(tornado.web.RequestHandler):
     def get(self):
