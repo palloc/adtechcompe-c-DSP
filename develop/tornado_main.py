@@ -15,6 +15,7 @@ ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
 cpcs = budgets_df.loc['cpc']
 nurl = 'http://104.155.237.141/win/'
+alfa_list=[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
 hashed_ng_domains = {
     k: set(v) for k, v in json.load(open('json/ngdomains.json')).iteritems()}
@@ -31,7 +32,7 @@ class BidHandler(tornado.web.RequestHandler):
         request = self.request.body
         j = json.loads(request)
         auction_id = j['id']
-        
+
         # floorPrice is optional
         floorprice = 0 if j['floorPrice'] is None else j['floorPrice']
 
@@ -55,9 +56,14 @@ class BidHandler(tornado.web.RequestHandler):
         # predict CTR
         ctr_list = pred.predict(bid_request_for_predict, advertisers)
         # cal bidprice
-        value_list = []
+        value_list_from_predict = []
         for (i, ctr) in enumerate(ctr_list):
-            value_list.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
+            value_list_from_predict.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
+
+        value_list = []
+        for (i, value) in enumerate(value_list):
+            value_list.append(value*alfa_list[i])
+
         bidPrice = max(value_list)
 
         adv_id_ = value_list.index(max(value_list)) + 1
@@ -67,7 +73,7 @@ class BidHandler(tornado.web.RequestHandler):
         # check floor price
         if floorprice > bidPrice:
             bidPrice = floorprice + 100
-        
+
         # make response
         response = {
             'id' : auction_id,
