@@ -85,12 +85,6 @@ class BidHandler(tornado.web.RequestHandler):
         else:
             self.set_status(204)
 
-
-        # set header
-        self.set_header('Content-Type', 'application/json')
-        self.write(json.dumps(response))
-
-
         # log data
         with open("/var/log/bid_access.log", "a+") as file:
             file.write(time.ctime())
