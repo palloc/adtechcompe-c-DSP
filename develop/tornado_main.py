@@ -46,7 +46,7 @@ class BidHandler(tornado.web.RequestHandler):
         #no badgets
         if len(advertisers) < 1:
             self.set_status(204)
-        
+
         bid_user = int(j["user"])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
 
@@ -62,6 +62,10 @@ class BidHandler(tornado.web.RequestHandler):
         adv_id = 'adv_' + str(adv_id_).zfill(2)
 
         bidPrice *= 1000
+        # check floor price
+        if floorprice > bidPrice:
+            bidPrice = floorprice + 100
+        
         # make response
         response = {
             'id' : auction_id,
@@ -69,13 +73,11 @@ class BidHandler(tornado.web.RequestHandler):
             'advertiserId' : adv_id,
             'nurl' : nurl + adv_id
         }
-        # check floor price
-        if floorprice < bidPrice:
-            # set header
-            self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(response))
-        else:
-            self.set_status(204)
+
+        # set header
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(response))
+
 
         # log data
         with open("/var/log/bid_access.log", "a+") as file:
