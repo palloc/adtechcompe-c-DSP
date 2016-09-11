@@ -70,11 +70,9 @@ class BidHandler(tornado.web.RequestHandler):
         adv_id = 'adv_' + str(adv_id_).zfill(2)
 
         bidPrice *= 1000
-        if floorprice < bidPrice:
-            self.set_header('Content-Type', 'application/json')
-            self.write(json.dumps(response))
-        else:
-            self.set_status(204)
+        # check floor price
+        if floorprice > bidPrice:
+            bidPrice = floorprice + 100
 
         # make response
         response = {
