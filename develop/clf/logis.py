@@ -1,12 +1,16 @@
 #coding:utf-8
 
 import numpy as np
-import MySQLdb 
+
 import sys 
 import csv                                                                               
 import pickle 
 import matplotlib.pyplot as plt
 import matplotlib
+import scipy as sp
+import sys
+sys.path.append("/usr/local/lib/python2.7/dist-packages")
+import MySQLdb 
 from db_config import Mysql_config
 
 
@@ -17,18 +21,18 @@ print 'yay'
 device_dic = {'Android':0,'BlackBerry':1,'iOS':2,'Windows':3}
 browser_dic = {'Chrome':0,'Firefox':1,'Opera':2,'Safari':3}
 
-with open("cluster_dic_site.dump","r") as f:
+with open("dics/cluster_dic_site.dump","r") as f:
     cluster_dic_site = pickle.load(f)
 
-with open("cluster_dic_spot.dump","r") as f:
+with open("dics/cluster_dic_spot.dump","r") as f:
     cluster_dic_spot = pickle.load(f)
 
-with open("cluster_dic_user.dump","r") as f:
+with open("dics/cluster_dic_user.dump","r") as f:
     cluster_dic_user = pickle.load(f)
 
 
 def get_test_data(sample,userID = False,device=False,browser=False,site=False,spot=False):
-    cursor.execute("select userID,device,browser,site,spot,adv_1,adv_2,adv_3,adv_4,adv_5,adv_6,adv_7,adv_8,adv_9,adv_10,adv_11,adv_12,adv_13,adv_14,adv_15,adv_16,adv_17,adv_18,adv_19,adv_20 from ad limit %d;" % sample)
+    cursor.execute("select userID,device,browser,site,spot,adv_1,adv_2,adv_3,adv_4,adv_5,adv_6,adv_7,adv_8,adv_9,adv_10,adv_11,adv_12,adv_13,adv_14,adv_15,adv_16,adv_17,adv_18,adv_19,adv_20 from ad order by rand() limit %d;" % sample)
     result = cursor.fetchall()
     train_x = []
     train_y = []
@@ -99,8 +103,11 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 from sklearn.metrics import f1_score
 from sklearn.ensemble import RandomForestClassifier as rfc
-from sklearn.grid_search import GridSearchCV
+from sklearn.grid_search import GridSearchCV,RandomizedSearchCV
 from sklearn.externals import joblib
+sys.path.append("/home/toyama/ad/xgboost/python-package")
+import xgboost as xgb
+
 
 def grid_search(clf):
     parameters = {
@@ -125,11 +132,23 @@ def classify(clf,grid = False):
             if grid:
                 print "grid"
                 clf = grid_search(clf)
+        elif clf == 'xgb':
+            param_distributions={'max_depth': sp.stats.randint(1,11),
+                     'subsample': sp.stats.uniform(0.5,0.5),
+                     'colsample_bytree': sp.stats.uniform(0.5,0.5)}
+            xgb_model = xgb.XGBClassifier()
+            clf = RandomizedSearchCV(xgb_model,
+                        param_distributions,
+                        cv=5,
+                        n_iter=10,
+                        scoring="log_loss",
+                        n_jobs=5,
+                        verbose=2)
         train_y_1 = [y[n] for y in train_y]
         test_y_1 = [y[n] for y in test_y]
     
         print "fitting"
-        clf.fit(train_x,train_y_1)
+        clf.fit(np.array(train_x),np.array(train_y_1))
         if grid:
             print clf.best_estimator_
         pred_y = clf.predict(test_x)
@@ -137,13 +156,13 @@ def classify(clf,grid = False):
         print report
         f1 = f1_score(test_y_1,pred_y)
         all_f += f1
-        """with open("clf/lr_clf_{}.dump".format(n+1),"w") as f:
+        with open("clf/xgb_clf_{}.dump".format(n+1),"w") as f:
             pickle.dump(clf, f)
-        """
+        
     print all_f
     
 
-classify('rfc',grid = True)
+classify('xgb',grid = False)
         
 """
 error = 0
