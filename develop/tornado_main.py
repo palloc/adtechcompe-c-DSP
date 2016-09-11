@@ -31,7 +31,9 @@ class BidHandler(tornado.web.RequestHandler):
         request = self.request.body
         j = json.loads(request)
         auction_id = j['id']
-        floorprice = j['floorPrice']
+        
+        # floorPrice is optional
+        floorprice = 0 if j['floorPrice'] is None else j['floorPrice']
 
         # fetch all advertiser's budgets
 
