@@ -13,6 +13,7 @@ import predict as pred
 
 ngdomains_list = json.load(open('json/ngdomains.json'))
 budgets_df = pd.read_json('json/budgets.json')
+cpcs = budgets_df.loc['cpc']
 nurl = 'http://104.155.237.141/win/'
 
 hashed_ng_domains = {
@@ -89,7 +90,8 @@ class Win_Handler(tornado.web.RequestHandler):
         req = json.loads(self.request.body)
 
         # consume adv_id's badget
-        bg.consume(adv_id, float(req['price']))
+        if req['isClick'] == 1:
+            bg.consume(adv_id, float(cpcs[adv_id]))
 
 class DebugHandler(tornado.web.RequestHandler):
     def get(self):
