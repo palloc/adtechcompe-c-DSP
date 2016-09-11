@@ -76,6 +76,7 @@ class BidHandler(tornado.web.RequestHandler):
             file.write(time.ctime())
             file.write("   ")
             file.write(json.dumps(response))
+            file.write(' ' + j['site'])
             file.write("\n")
         with open("/var/log/bid_price.log", "a+") as file:
             buf = " bid price = " + str(bidPrice) + "     adv_id = " + adv_id
