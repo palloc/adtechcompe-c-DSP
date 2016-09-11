@@ -31,7 +31,9 @@ class BidHandler(tornado.web.RequestHandler):
         request = self.request.body
         j = json.loads(request)
         auction_id = j['id']
-        floorprice = j['floorPrice']
+        
+        # floorPrice is optional
+        floorprice = 0 if j['floorPrice'] is None else j['floorPrice']
 
         # fetch all advertiser's budgets
 
@@ -46,7 +48,7 @@ class BidHandler(tornado.web.RequestHandler):
         #no badgets
         if len(advertisers) < 1:
             self.set_status(204)
-        
+
         bid_user = int(j["user"])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
 
