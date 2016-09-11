@@ -61,7 +61,7 @@ class BidHandler(tornado.web.RequestHandler):
             value_list_from_predict.append(ctr * budgets_df['adv_'+str(i+1).zfill(2)]['cpc'])
 
         value_list = []
-        for (i, value) in enumerate(value_list):
+        for (i, value) in enumerate(value_list_from_predict):
             value_list.append(value*alfa_list[i])
 
         bidPrice = max(value_list)
