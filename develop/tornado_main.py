@@ -34,6 +34,7 @@ class BidHandler(tornado.web.RequestHandler):
         floorprice = j['floorPrice']
 
         # fetch all advertiser's budgets
+
         budgets = bg.get_budgets()
 
         # check NG domains and budgets, then decide advertiser to join
@@ -42,6 +43,10 @@ class BidHandler(tornado.web.RequestHandler):
             if j['site'] not in ngdomains and budgets[adv] > 0
         ]
 
+        #no badgets
+        if len(advertisers) < 1:
+            self.set_status(204)
+        
         bid_user = int(j["user"])
         bid_request_for_predict = [j["browser"], j["site"],bid_user]
 
